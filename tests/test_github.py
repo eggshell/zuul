@@ -356,7 +356,9 @@ class TestGithub(ZuulTestCase):
         self.waitUntilSettled()
         self.assertFalse(A.is_merged)
         self.assertEqual(len(A.comments), 1)
-        self.assertEqual(A.comments[0], 'Merge failed')
+        self.assertEqual(A.comments[0], 'Merge Failed! Help can be found at '
+                                        'https://bonnyci.org/lore/end_users/'
+                                        'use/#handling-merge-failures')
 
     def test_parallel_changes(self):
         "Test that changes are tested in parallel and merged in series"

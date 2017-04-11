@@ -74,7 +74,7 @@ pipelines:
     description: Pipeline for merging the pull request
     manager: IndependentPipelineManager
     source: github
-    merge-failure-message: 'Merge failed'
+    merge-failure-message: 'Merge Failed! Help can be found at https://bonnyci.org/lore/end_users/use/#handling-merge-failures'
     trigger:
       github:
         - event: pr-comment
