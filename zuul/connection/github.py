@@ -565,6 +565,10 @@ class GithubConnection(BaseConnection):
             pulls.append(pr.as_dict())
 
         if len(pulls) > 1:
+            for pull in pulls:
+                self.commentPull(pull.owner, pull.project, pull.pr_number,
+                                 'Multiple pulls found with head sha %s. '
+                                 'Please amend your change.' % sha)
             raise Exception('Multiple pulls found with head sha %s' % sha)
 
         log_rate_limit(self.log, github)

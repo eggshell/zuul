@@ -527,3 +527,27 @@ class TestGithub(ZuulTestCase):
         self.assertNotIn('merge', A.labels)
         self.assertNotIn('merge', B.labels)
         self.assertNotIn('merge', C.labels)
+
+    def test_multiple_pulls(self):
+        self.worker.hold_jobs_in_build = True
+        self.create_branch('org/project', 'pr_branch_A')
+        self.create_branch('org/project', 'pr_branch_B')
+        A = self.fake_github.openFakePullRequest('org/project', 'pr_branch_A',
+                                                 'A')
+        B = self.fake_github.openFakePullRequest('org/project', 'pr_branch_B',
+                                                 'B')
+        self.fake_github.emitEvent(A.getPullRequestOpenedEvent())
+        self.fake_github.emitEvent(B.getPullRequestOpenedEvent())
+        self.waitUntilSettled()
+
+        self.worker.hold_jobs_in_build = False
+        self.worker.release()
+        self.waitUntilSettled()
+        self.fake_github.emitEvent(A.addLabel('merge'))
+        self.fake_github.emitEvent(B.addLabel('merge'))
+        self.waitUntilSettled()
+
+        self.assertThat(A.comments[0],
+                        MatchesRegex('.*Multiple pulls.*', re.DOTALL))
+        self.assertThat(B.comments[0],
+                        MatchesRegex('.*Multiple pulls.*', re.DOTALL))
